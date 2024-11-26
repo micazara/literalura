@@ -2,12 +2,27 @@ package com.alura.literalura.principal;
 
 import java.util.Scanner;
 
+import com.alura.literalura.model.DatosAutor;
+import com.alura.literalura.model.DatosRespuesta;
+import com.alura.literalura.servicio.ConsumoAPI;
+import com.alura.literalura.servicio.Deserializador;
+
 public class Principal {
 
     private Scanner teclado;
+    private ConsumoAPI consumoApi;
+    private final String URL_BASE;
+    private final String URL_SEARCH;
+    private Deserializador deserializador;
+    private final String URL_SORT;
 
     public Principal() {
         this.teclado = new Scanner(System.in);
+        this.consumoApi = new ConsumoAPI();
+        this.URL_BASE = "https://gutendex.com/books/";
+        this.URL_SEARCH = "?search=";
+        this.deserializador = new Deserializador();
+        this.URL_SORT = "&sort=popular";
     }
 
     public void mostrarMenu() {
@@ -58,6 +73,17 @@ public class Principal {
 
     private void buscarLibroPorTitulo() {
         mostrarMensaje("Ingrese el nombre del libro que quiere buscar: ");
+        String nombre = teclado.nextLine();
+        String json = this.consumoApi.obtenerDatos(this.URL_BASE + this.URL_SEARCH + nombre.replace(" ", "+") + this.URL_SORT);
+        var respuesta = this.deserializador.obtenerDatos(json, DatosRespuesta.class);
+        mostrarMensaje("----------LIBRO----------");
+        mostrarMensaje("Título: " + respuesta.libros().get(0).titulo());
+        for (DatosAutor autor : respuesta.libros().get(0).autores()) {
+            mostrarMensaje("Autor: " +  autor.nombre());
+        }
+        mostrarMensaje("Idioma: " +  respuesta.libros().get(0).obtenerPrimerIdioma());
+        mostrarMensaje("Número de descargas: " +  respuesta.libros().get(0).cantidadDescargas());
+        mostrarMensaje("-------------------------");
     }
 
     private void listarLibrosRegistrados() {
@@ -65,7 +91,7 @@ public class Principal {
     }
 
     private void listarAutoresRegistrados() {
-        mostrarMensaje("Listar atuores registrado");
+        mostrarMensaje("Listar autores registrado");
     }
 
     private void listarAutoresVivosEnUnDeterminadoAnio() {

@@ -142,8 +142,9 @@ public class Principal {
         return respuesta.libros().get(0);
     }
 
-    private List<Libro> listarLibrosRegistrados() {
-        return this.libroService.obtenerTodosLosLibros();
+    private void listarLibrosRegistrados() {
+        this.libroService.obtenerTodosLosLibros()
+                .forEach(this::mostrarDatosDelLibroGuardado);
     }
 
     private void listarAutoresRegistrados() {

@@ -19,7 +19,7 @@ public class LibroService {
     }
 
     public List<Libro> obtenerTodosLosLibros() {
-      return this.repository.findAll();
+      return this.repository.findAllByOrderByTituloAsc();
     }
 
 }

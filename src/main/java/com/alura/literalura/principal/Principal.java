@@ -99,11 +99,30 @@ public class Principal {
         }
     }
 
+    private void listarLibrosRegistrados() {
+        this.libroService.obtenerTodosLosLibros()
+                .forEach(this::mostrarDatosDelLibroGuardado);
+    }
+
+    private void listarAutoresRegistrados() {
+        this.autorService.obtenerTodosLosAutores().forEach(System.out::println);
+    }
+
+    private void listarAutoresVivosEnUnDeterminadoAnio() {
+        mostrarMensaje("listarAutoresVivosEnUnDeterminadoAnio");
+    }
+
+    private void listarLibrosPorIdioma() {
+        mostrarMensaje("listarLibrosPorIdioma");
+    }
+
+    private void mostrarMensaje(String mensaje) {
+        System.out.println(mensaje);
+    }
+
     private Libro guardarLibroConAutores(DatosLibro datosLibro) {
         Libro libro = new Libro(datosLibro);
         DatosAutor datosAutor = datosLibro.obtenerPrimerAutor();
-        // List<Autor> autoresPersistidos = new ArrayList<>();
-        // for (DatosAutor datosAutor : datosLibro.autores()) {
         Optional<Autor> autorExistente = this.autorService.findByNombre(datosAutor.nombre());
         Autor autor;
         if (autorExistente.isPresent()) {
@@ -115,9 +134,6 @@ public class Principal {
             autor.setFechaFallecimiento(datosAutor.fechaFallecimiento());
             autor = this.autorService.save(autor);
         }
-        // autoresPersistidos.add(autor);
-        // }
-        // libro.setAutores(autoresPersistidos);
         libro.setAutor(autor);
         return this.libroService.save(libro);
     }
@@ -141,27 +157,6 @@ public class Principal {
             return null;
         }
         return respuesta.libros().get(0);
-    }
-
-    private void listarLibrosRegistrados() {
-        this.libroService.obtenerTodosLosLibros()
-                .forEach(this::mostrarDatosDelLibroGuardado);
-    }
-
-    private void listarAutoresRegistrados() {
-        mostrarMensaje("Listar autores registrado");
-    }
-
-    private void listarAutoresVivosEnUnDeterminadoAnio() {
-        mostrarMensaje("listarAutoresVivosEnUnDeterminadoAnio");
-    }
-
-    private void listarLibrosPorIdioma() {
-        mostrarMensaje("listarLibrosPorIdioma");
-    }
-
-    private void mostrarMensaje(String mensaje) {
-        System.out.println(mensaje);
     }
 
 }

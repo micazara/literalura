@@ -105,11 +105,20 @@ public class Principal {
     }
 
     private void listarAutoresRegistrados() {
-        this.autorService.obtenerTodosLosAutores().forEach(System.out::println);
+        List<Autor> autores = this.autorService.obtenerTodosLosAutores();
+        if (autores.isEmpty()) {
+            mostrarMensaje("No se encontraron autores");
+            return;
+        }
+        autores.forEach(System.out::println);
     }
 
     private void listarAutoresVivosEnUnDeterminadoAnio() {
         mostrarMensaje("listarAutoresVivosEnUnDeterminadoAnio");
+        // de que año queres ver los actores vivos?
+        // tomo ese año, se lo paso a mi repo y le pido los autores que nacieron antes
+        // de ese año y que murieron despues de ese año. o sea que este between año de
+        // nacimiento y fecha de fallecimiento
     }
 
     private void listarLibrosPorIdioma() {

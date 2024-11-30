@@ -94,12 +94,12 @@ public class Principal {
         if (datosLibro == null) {
             mostrarMensaje("No se encontró ningún libro con el título: " + nombre);
         } else {
-            guardarLibroConAutores(datosLibro);
-            mostrarDatosDelLibroObtenido(datosLibro);
+            Libro guardado = guardarLibroConAutores(datosLibro);
+            mostrarDatosDelLibroGuardado(guardado);
         }
     }
 
-    private void guardarLibroConAutores(DatosLibro datosLibro) {
+    private Libro guardarLibroConAutores(DatosLibro datosLibro) {
         Libro libro = new Libro(datosLibro);
         List<Autor> autoresPersistidos = new ArrayList<>();
         for (DatosAutor datosAutor : datosLibro.autores()) {
@@ -118,17 +118,17 @@ public class Principal {
             autoresPersistidos.add(autor);
         }
         libro.setAutores(autoresPersistidos);
-        this.libroService.save(libro);
+        return this.libroService.save(libro);
     }
 
-    private void mostrarDatosDelLibroObtenido(DatosLibro datosLibro) {
+    private void mostrarDatosDelLibroGuardado(Libro libro) {
         mostrarMensaje("----------LIBRO----------");
-        mostrarMensaje("Título: " + datosLibro.titulo());
-        for (DatosAutor autor : datosLibro.autores()) {
-            mostrarMensaje("Autor: " + autor.nombre());
+        mostrarMensaje("Título: " + libro.getTitulo());
+        for (Autor autor : libro.getAutores()) {
+            mostrarMensaje("Autor: " + autor.getNombre());
         }
-        mostrarMensaje("Idioma: " + datosLibro.obtenerPrimerIdioma());
-        mostrarMensaje("Número de descargas: " + datosLibro.cantidadDescargas());
+        mostrarMensaje("Idioma: " + libro.getIdioma());
+        mostrarMensaje("Número de descargas: " + libro.getCantidadDescargas());
         mostrarMensaje("-------------------------");
     }
 
@@ -142,8 +142,8 @@ public class Principal {
         return respuesta.libros().get(0);
     }
 
-    private void listarLibrosRegistrados() {
-        mostrarMensaje("Listar libros registrado");
+    private List<Libro> listarLibrosRegistrados() {
+        return this.libroService.obtenerTodosLosLibros();
     }
 
     private void listarAutoresRegistrados() {

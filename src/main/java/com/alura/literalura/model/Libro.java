@@ -14,17 +14,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "Libros")
 public class Libro {
     private String titulo;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "libro_autor", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "libro_id"), // Columna de la tabla "libro"
-            inverseJoinColumns = @JoinColumn(name = "autor_id") // Columna de la tabla "autor"
-    )
-    private List<Autor> autores;
+    // @ManyToMany(fetch = FetchType.EAGER)
+    // @JoinTable(name = "libro_autor", // Nombre de la tabla intermedia
+    // joinColumns = @JoinColumn(name = "libro_id"), // Columna de la tabla "libro"
+    // inverseJoinColumns = @JoinColumn(name = "autor_id") // Columna de la tabla
+    // "autor"
+    // )
+    // private List<Autor> autores;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
+    private Autor autor;
     private String idioma;
     private Integer cantidadDescargas;
     @Id
@@ -37,7 +42,7 @@ public class Libro {
 
     public Libro(DatosLibro datosLibro) {
         this.titulo = datosLibro.titulo();
-        this.autores = new ArrayList<>();
+        // this.autores = new ArrayList<>();
         this.idioma = datosLibro.obtenerPrimerIdioma();
         this.cantidadDescargas = datosLibro.cantidadDescargas();
     }
@@ -48,14 +53,6 @@ public class Libro {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    public List<Autor> getAutores() {
-        return autores;
-    }
-
-    public void setAutores(List<Autor> autores) {
-        this.autores = autores;
     }
 
     public Integer getCantidadDescargas() {
@@ -80,6 +77,14 @@ public class Libro {
 
     public void setIdioma(String idioma) {
         this.idioma = idioma;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
     }
 
 }

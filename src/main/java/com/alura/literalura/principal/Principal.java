@@ -101,32 +101,33 @@ public class Principal {
 
     private Libro guardarLibroConAutores(DatosLibro datosLibro) {
         Libro libro = new Libro(datosLibro);
-        List<Autor> autoresPersistidos = new ArrayList<>();
-        for (DatosAutor datosAutor : datosLibro.autores()) {
-            Optional<Autor> autorExistente = this.autorService.findByNombre(datosAutor.nombre());
-
-            Autor autor;
-            if (autorExistente.isPresent()) {
-                autor = autorExistente.get();
-            } else {
-                autor = new Autor();
-                autor.setNombre(datosAutor.nombre());
-                autor.setFechaNacimiento(datosAutor.fechaNacimiento());
-                autor.setFechaFallecimiento(datosAutor.fechaFallecimiento());
-                autor = this.autorService.save(autor);
-            }
-            autoresPersistidos.add(autor);
+        DatosAutor datosAutor = datosLibro.obtenerPrimerAutor();
+        // List<Autor> autoresPersistidos = new ArrayList<>();
+        // for (DatosAutor datosAutor : datosLibro.autores()) {
+        Optional<Autor> autorExistente = this.autorService.findByNombre(datosAutor.nombre());
+        Autor autor;
+        if (autorExistente.isPresent()) {
+            autor = autorExistente.get();
+        } else {
+            autor = new Autor();
+            autor.setNombre(datosAutor.nombre());
+            autor.setFechaNacimiento(datosAutor.fechaNacimiento());
+            autor.setFechaFallecimiento(datosAutor.fechaFallecimiento());
+            autor = this.autorService.save(autor);
         }
-        libro.setAutores(autoresPersistidos);
+        // autoresPersistidos.add(autor);
+        // }
+        // libro.setAutores(autoresPersistidos);
+        libro.setAutor(autor);
         return this.libroService.save(libro);
     }
 
     private void mostrarDatosDelLibroGuardado(Libro libro) {
         mostrarMensaje("----------LIBRO----------");
         mostrarMensaje("Título: " + libro.getTitulo());
-        for (Autor autor : libro.getAutores()) {
-            mostrarMensaje("Autor: " + autor.getNombre());
-        }
+        // for (Autor autor : libro.getAutores()) {
+        mostrarMensaje("Autor: " + libro.getAutor().getNombre());
+        // }
         mostrarMensaje("Idioma: " + libro.getIdioma());
         mostrarMensaje("Número de descargas: " + libro.getCantidadDescargas());
         mostrarMensaje("-------------------------");

@@ -16,4 +16,8 @@ public record DatosLibro(
                 return (idiomas != null && !idiomas.isEmpty()) ? idiomas.get(0) : null;
         }
 
+        public DatosAutor obtenerPrimerAutor() {
+                return (autores != null && !autores.isEmpty()) ? autores.get(0) : null;
+        }
+
 }

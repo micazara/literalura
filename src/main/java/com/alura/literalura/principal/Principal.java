@@ -1,11 +1,21 @@
 package com.alura.literalura.principal;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
+import com.alura.literalura.model.Autor;
 import com.alura.literalura.model.DatosAutor;
+import com.alura.literalura.model.DatosLibro;
 import com.alura.literalura.model.DatosRespuesta;
+import com.alura.literalura.model.Libro;
+import com.alura.literalura.repository.AutorRepository;
+import com.alura.literalura.repository.LibroRepository;
+import com.alura.literalura.servicio.AutorService;
 import com.alura.literalura.servicio.ConsumoAPI;
 import com.alura.literalura.servicio.Deserializador;
+import com.alura.literalura.servicio.LibroService;
 
 public class Principal {
 
@@ -15,14 +25,19 @@ public class Principal {
     private final String URL_SEARCH;
     private Deserializador deserializador;
     private final String URL_SORT;
+    private AutorService autorService;
+    private LibroService libroService;
 
-    public Principal() {
+    public Principal(LibroService _libroService, AutorService _autorService) {
         this.teclado = new Scanner(System.in);
         this.consumoApi = new ConsumoAPI();
         this.URL_BASE = "https://gutendex.com/books/";
         this.URL_SEARCH = "?search=";
         this.deserializador = new Deserializador();
         this.URL_SORT = "&sort=popular";
+        this.libroService = _libroService;
+        this.autorService = _autorService;
+
     }
 
     public void mostrarMenu() {
@@ -74,16 +89,57 @@ public class Principal {
     private void buscarLibroPorTitulo() {
         mostrarMensaje("Ingrese el nombre del libro que quiere buscar: ");
         String nombre = teclado.nextLine();
-        String json = this.consumoApi.obtenerDatos(this.URL_BASE + this.URL_SEARCH + nombre.replace(" ", "+") + this.URL_SORT);
-        var respuesta = this.deserializador.obtenerDatos(json, DatosRespuesta.class);
-        mostrarMensaje("----------LIBRO----------");
-        mostrarMensaje("Título: " + respuesta.libros().get(0).titulo());
-        for (DatosAutor autor : respuesta.libros().get(0).autores()) {
-            mostrarMensaje("Autor: " +  autor.nombre());
+        DatosLibro datosLibro = obtenerDatosLibro(nombre);
+
+        if (datosLibro == null) {
+            mostrarMensaje("No se encontró ningún libro con el título: " + nombre);
+        } else {
+            guardarLibroConAutores(datosLibro);
+            mostrarDatosDelLibroObtenido(datosLibro);
         }
-        mostrarMensaje("Idioma: " +  respuesta.libros().get(0).obtenerPrimerIdioma());
-        mostrarMensaje("Número de descargas: " +  respuesta.libros().get(0).cantidadDescargas());
+    }
+
+    private void guardarLibroConAutores(DatosLibro datosLibro) {
+        Libro libro = new Libro(datosLibro);
+        List<Autor> autoresPersistidos = new ArrayList<>();
+        for (DatosAutor datosAutor : datosLibro.autores()) {
+            Optional<Autor> autorExistente = this.autorService.findByNombre(datosAutor.nombre());
+
+            Autor autor;
+            if (autorExistente.isPresent()) {
+                autor = autorExistente.get();
+            } else {
+                autor = new Autor();
+                autor.setNombre(datosAutor.nombre());
+                autor.setFechaNacimiento(datosAutor.fechaNacimiento());
+                autor.setFechaFallecimiento(datosAutor.fechaFallecimiento());
+                autor = this.autorService.save(autor);
+            }
+            autoresPersistidos.add(autor);
+        }
+        libro.setAutores(autoresPersistidos);
+        this.libroService.save(libro);
+    }
+
+    private void mostrarDatosDelLibroObtenido(DatosLibro datosLibro) {
+        mostrarMensaje("----------LIBRO----------");
+        mostrarMensaje("Título: " + datosLibro.titulo());
+        for (DatosAutor autor : datosLibro.autores()) {
+            mostrarMensaje("Autor: " + autor.nombre());
+        }
+        mostrarMensaje("Idioma: " + datosLibro.obtenerPrimerIdioma());
+        mostrarMensaje("Número de descargas: " + datosLibro.cantidadDescargas());
         mostrarMensaje("-------------------------");
+    }
+
+    private DatosLibro obtenerDatosLibro(String nombre) {
+        String json = this.consumoApi
+                .obtenerDatos(this.URL_BASE + this.URL_SEARCH + nombre.replace(" ", "+") + this.URL_SORT);
+        DatosRespuesta respuesta = this.deserializador.obtenerDatos(json, DatosRespuesta.class);
+        if (respuesta.libros() == null || respuesta.libros().isEmpty()) {
+            return null;
+        }
+        return respuesta.libros().get(0);
     }
 
     private void listarLibrosRegistrados() {

@@ -1,6 +1,7 @@
 package com.alura.literalura.principal;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -52,8 +53,18 @@ public class Principal {
                     5- listar libros por idioma
                     0- salir
                     """);
-            opcion = teclado.nextInt();
-            teclado.nextLine();
+            try {
+                opcion = teclado.nextInt();
+                teclado.nextLine();
+            } catch (InputMismatchException e) {
+                mostrarMensaje("Ingresaste un carácter inválido");
+                teclado.nextLine();
+                continue;
+            } catch (Exception e) {
+                mostrarMensaje("Ocurrió un error inesperado");
+                teclado.nextLine();
+                continue;
+            }
             switch (opcion) {
                 case 1:
                     buscarLibroPorTitulo();
@@ -68,7 +79,11 @@ public class Principal {
                     break;
 
                 case 4:
-                    listarAutoresVivosEnUnDeterminadoAnio();
+                    try {
+                        listarAutoresVivosEnUnDeterminadoAnio();
+                    } catch (InputMismatchException e) {
+                        mostrarMensaje("Ingresaste un carácter inválido");
+                    }
                     break;
 
                 case 5:

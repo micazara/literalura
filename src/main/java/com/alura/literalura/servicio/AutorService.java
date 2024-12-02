@@ -26,4 +26,8 @@ public class AutorService {
     public List<Autor> obtenerTodosLosAutores() {
         return this.repository.findAllByOrderByNombreAsc();
     }
+
+    public List<Autor> obtenerAutoresVivosEnUnDeterminadoAnio(int anio) {
+       return this.repository.obtenerAutoresVivosEnUnDeterminadoAnio(anio);
+    }
 }

@@ -26,4 +26,8 @@ public class LibroService {
         return this.repository.findAllByIdioma(idioma);
     }
 
+    public List<Libro> top10LibrosMasDescargados() {
+        return this.repository.findTop10ByOrderByCantidadDescargasDesc();
+    }
+
 }

@@ -51,6 +51,7 @@ public class Principal {
                     3- listar autores registrados
                     4- listar autores vivos en un determinado año
                     5- listar libros por idioma
+                    6- top 10 libros más descargados
                     0- salir
                     """);
             try {
@@ -90,7 +91,9 @@ public class Principal {
                     case 5:
                         listarLibrosPorIdioma();
                         break;
-
+                    case 6:
+                        top10LibrosMasDescargados();
+                        break;
                     case 0:
                         mostrarMensaje("Saliste");
                         break;
@@ -157,6 +160,11 @@ public class Principal {
             mostrarMensaje("No se encontraron libros para ese idioma");
         }
         librosFiltrados.forEach(this::mostrarDatosDelLibroGuardado);
+    }
+
+    private void top10LibrosMasDescargados() {
+        this.libroService.top10LibrosMasDescargados()
+                .forEach(this::mostrarDatosDelLibroGuardado);
     }
 
     private void mostrarMensaje(String mensaje) {

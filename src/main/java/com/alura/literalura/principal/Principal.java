@@ -65,38 +65,42 @@ public class Principal {
                 teclado.nextLine();
                 continue;
             }
-            switch (opcion) {
-                case 1:
-                    buscarLibroPorTitulo();
-                    break;
+            try {
+                switch (opcion) {
+                    case 1:
+                        buscarLibroPorTitulo();
+                        break;
 
-                case 2:
-                    listarLibrosRegistrados();
-                    break;
+                    case 2:
+                        listarLibrosRegistrados();
+                        break;
 
-                case 3:
-                    listarAutoresRegistrados();
-                    break;
+                    case 3:
+                        listarAutoresRegistrados();
+                        break;
 
-                case 4:
-                    try {
-                        listarAutoresVivosEnUnDeterminadoAnio();
-                    } catch (InputMismatchException e) {
-                        mostrarMensaje("Ingresaste un carácter inválido");
-                    }
-                    break;
+                    case 4:
+                        try {
+                            listarAutoresVivosEnUnDeterminadoAnio();
+                        } catch (InputMismatchException e) {
+                            mostrarMensaje("Ingresaste un carácter inválido");
+                        }
+                        break;
 
-                case 5:
-                    listarLibrosPorIdioma();
-                    break;
+                    case 5:
+                        listarLibrosPorIdioma();
+                        break;
 
-                case 0:
-                    mostrarMensaje("Saliste");
-                    break;
+                    case 0:
+                        mostrarMensaje("Saliste");
+                        break;
 
-                default:
-                    mostrarMensaje("Opcion inexistente");
-                    break;
+                    default:
+                        mostrarMensaje("Opcion inexistente");
+                        break;
+                }
+            } catch (Exception e) {
+                mostrarMensaje("Ocurrió un error inesperado");
             }
         }
     }
@@ -140,7 +144,19 @@ public class Principal {
     }
 
     private void listarLibrosPorIdioma() {
-        mostrarMensaje("listarLibrosPorIdioma");
+        mostrarMensaje("Ingrese el idioma para buscar los libros: ");
+        mostrarMensaje("""
+                es- español
+                en- inglés
+                fr- francés
+                pt- portugués
+                """);
+        String idioma = teclado.nextLine();
+        List<Libro> librosFiltrados = this.libroService.obtenerLIbrosPorIdioma(idioma);
+        if (librosFiltrados.isEmpty()) {
+            mostrarMensaje("No se encontraron libros para ese idioma");
+        }
+        librosFiltrados.forEach(this::mostrarDatosDelLibroGuardado);
     }
 
     private void mostrarMensaje(String mensaje) {

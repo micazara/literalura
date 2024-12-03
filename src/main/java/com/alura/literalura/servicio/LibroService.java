@@ -19,7 +19,11 @@ public class LibroService {
     }
 
     public List<Libro> obtenerTodosLosLibros() {
-      return this.repository.findAllByOrderByTituloAsc();
+        return this.repository.findAllByOrderByTituloAsc();
+    }
+
+    public List<Libro> obtenerLIbrosPorIdioma(String idioma) {
+        return this.repository.findAllByIdioma(idioma);
     }
 
 }
